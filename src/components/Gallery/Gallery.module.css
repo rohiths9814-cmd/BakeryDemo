@@ -1,0 +1,84 @@
+.section {
+  padding: var(--section-padding);
+  background: var(--cream);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 240px;
+  gap: 16px;
+}
+
+/* Make some items span more space for masonry look */
+.item:nth-child(1) {
+  grid-row: span 2;
+}
+
+.item:nth-child(4) {
+  grid-column: span 2;
+}
+
+.item:nth-child(6) {
+  grid-row: span 2;
+}
+
+.item {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(62, 35, 19, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  border-radius: var(--radius-md);
+}
+
+.item:hover .overlay {
+  opacity: 1;
+}
+
+.overlayIcon {
+  font-size: 1.8rem;
+  filter: brightness(2);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 180px;
+  }
+
+  .item:nth-child(4) {
+    grid-column: span 1;
+  }
+}

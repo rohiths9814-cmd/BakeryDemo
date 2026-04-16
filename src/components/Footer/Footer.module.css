@@ -1,0 +1,109 @@
+.footer {
+  background: var(--dark-brown);
+  color: rgba(255, 255, 255, 0.75);
+  padding-top: 70px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 50px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Brand */
+.brand {
+  padding-right: 20px;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.accent {
+  color: var(--caramel);
+}
+
+.tagline {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.socials {
+  display: flex;
+  gap: 12px;
+}
+
+.socialLink {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.socialLink:hover {
+  background: var(--caramel);
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* Links */
+.linksTitle {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.linksGroup ul li {
+  margin-bottom: 10px;
+}
+
+.linksGroup ul li a,
+.linksGroup ul li {
+  font-size: 0.87rem;
+  color: rgba(255, 255, 255, 0.55);
+  transition: all 0.3s ease;
+  line-height: 1.6;
+}
+
+.linksGroup ul li a:hover {
+  color: var(--caramel);
+  padding-left: 4px;
+}
+
+/* Bottom bar */
+.bottom {
+  padding: 20px 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

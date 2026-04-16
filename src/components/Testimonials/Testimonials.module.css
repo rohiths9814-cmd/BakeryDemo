@@ -1,0 +1,144 @@
+.section {
+  padding: var(--section-padding);
+  background: var(--cream-dark);
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.navBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--soft-white);
+  border: 1px solid var(--border-light);
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.navBtn:hover {
+  background: var(--warm-brown);
+  color: white;
+  border-color: var(--warm-brown);
+  transform: scale(1.05);
+}
+
+.cardWrapper {
+  flex: 1;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+}
+
+.card {
+  padding: 40px 48px;
+  background: var(--soft-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  text-align: center;
+  width: 100%;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.star {
+  color: var(--gold);
+  font-size: 1.2rem;
+}
+
+.quote {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--pastel-pink-light);
+}
+
+.authorName {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.authorLabel {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+/* Dots */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-light);
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.dotActive {
+  background: var(--caramel);
+  width: 28px;
+  border-radius: var(--radius-full);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navBtn {
+    display: none;
+  }
+
+  .card {
+    padding: 28px 24px;
+  }
+
+  .quote {
+    font-size: 1rem;
+  }
+
+  .cardWrapper {
+    min-height: 260px;
+  }
+}

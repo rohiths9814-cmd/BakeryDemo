@@ -1,0 +1,129 @@
+.section {
+  padding: var(--section-padding);
+  background: var(--cream-dark);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Image column */
+.imageCol {
+  position: relative;
+}
+
+.imageWrapper {
+  position: relative;
+}
+
+.mainImage {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.accentCard {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--warm-brown), var(--chocolate));
+  border-radius: var(--radius-lg);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.accentNumber {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.accentText {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Text column */
+.textCol {
+  padding: 10px 0;
+}
+
+.text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+
+/* Highlights */
+.highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 22px;
+  background: var(--soft-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.highlight:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateX(4px);
+}
+
+.highlightIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.highlight h4 {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.highlight p {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .mainImage {
+    height: 360px;
+  }
+
+  .accentCard {
+    right: 10px;
+    bottom: -16px;
+  }
+}

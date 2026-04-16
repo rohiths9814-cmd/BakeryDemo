@@ -1,0 +1,220 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=1920&h=1080&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(254, 249, 243, 0.92) 0%,
+    rgba(245, 235, 224, 0.88) 40%,
+    rgba(242, 196, 196, 0.82) 100%
+  );
+  z-index: 1;
+}
+
+[data-theme="dark"] .bgOverlay {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 18, 16, 0.95) 0%,
+    rgba(35, 26, 20, 0.92) 40%,
+    rgba(60, 30, 30, 0.88) 100%
+  );
+}
+
+.bgPattern {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.03;
+  background-image: radial-gradient(circle at 2px 2px, var(--warm-brown) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* Floating elements */
+.floater {
+  position: absolute;
+  font-size: 2.5rem;
+  z-index: 3;
+  opacity: 0.6;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.floater1 {
+  top: 15%;
+  left: 8%;
+  font-size: 3rem;
+}
+
+.floater2 {
+  top: 25%;
+  right: 10%;
+  font-size: 2.8rem;
+}
+
+.floater3 {
+  bottom: 20%;
+  left: 15%;
+  font-size: 2.2rem;
+}
+
+/* Content */
+.heroContent {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding-top: 80px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 10px 24px;
+  background: rgba(212, 168, 83, 0.12);
+  border: 1px solid rgba(212, 168, 83, 0.25);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--caramel);
+  letter-spacing: 1px;
+  margin-bottom: 28px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.08;
+  color: var(--dark-brown);
+  margin-bottom: 24px;
+}
+
+[data-theme="dark"] .title {
+  color: var(--cream-dark);
+}
+
+.titleAccent {
+  background: linear-gradient(135deg, var(--caramel), var(--blush));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin: 0 auto 36px;
+  line-height: 1.8;
+}
+
+.heroCtas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+/* Stats */
+.heroStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 28px 48px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .heroStats {
+  background: rgba(35, 26, 20, 0.6);
+  border-color: rgba(60, 46, 34, 0.5);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--warm-brown);
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-light);
+}
+
+/* Scroll indicator */
+.scrollIndicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: 1.4rem;
+  color: var(--text-light);
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
+
+  .heroStats {
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 32px;
+  }
+
+  .statDivider {
+    width: 60px;
+    height: 1px;
+  }
+
+  .floater {
+    display: none;
+  }
+
+  .heroContent {
+    padding-top: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroCtas {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
