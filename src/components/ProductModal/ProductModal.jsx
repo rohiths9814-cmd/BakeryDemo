@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ProductModal.module.css";
 
@@ -17,13 +18,121 @@ const modalVariants = {
   exit: { opacity: 0, scale: 0.92, y: 30, transition: { duration: 0.25 } },
 };
 
+const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
+
 export default function ProductModal({ product, onClose }) {
+  const [paymentState, setPaymentState] = useState("idle"); // idle | loading | success | error
+  const [paymentMessage, setPaymentMessage] = useState("");
+
   if (!product) return null;
 
   const whatsappMessage = encodeURIComponent(
     `Hi! I'd like to order *${product.name}* (₹${product.price}) from Sweet Crumbs Bakery. 🧁`
   );
   const whatsappUrl = `https://wa.me/919876543210?text=${whatsappMessage}`;
+
+  // ── Razorpay Checkout Flow ─────────────────────────────
+  const handleBuyNow = async () => {
+    setPaymentState("loading");
+    setPaymentMessage("");
+
+    try {
+      // Step 1: Create order on backend
+      const orderRes = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: product.price * 100, // Convert ₹ to paise
+          currency: "INR",
+          receipt: `rcpt_${product.id}_${Date.now()}`,
+        }),
+      });
+
+      if (!orderRes.ok) {
+        const errData = await orderRes.json();
+        throw new Error(errData.error || "Failed to create order.");
+      }
+
+      const { order_id, amount, currency } = await orderRes.json();
+
+      // Step 2: Open Razorpay checkout modal
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount,
+        currency,
+        name: "Sweet Crumbs Bakery",
+        description: product.name,
+        order_id,
+        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=120&h=120&fit=crop",
+        theme: {
+          color: "#6b4226",
+          backdrop_color: "rgba(30, 18, 10, 0.55)",
+        },
+        handler: async (response) => {
+          // Step 3: Verify payment on backend
+          try {
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyData.verified) {
+              setPaymentState("success");
+              setPaymentMessage(
+                `Payment successful! ID: ${response.razorpay_payment_id}`
+              );
+            } else {
+              setPaymentState("error");
+              setPaymentMessage(
+                verifyData.error || "Payment verification failed."
+              );
+            }
+          } catch {
+            setPaymentState("error");
+            setPaymentMessage("Could not verify payment. Please contact us.");
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: "",
+        },
+        modal: {
+          ondismiss: () => {
+            setPaymentState("idle");
+            setPaymentMessage("Payment cancelled.");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", (response) => {
+        setPaymentState("error");
+        setPaymentMessage(
+          response.error?.description || "Payment failed. Please try again."
+        );
+      });
+
+      rzp.open();
+      setPaymentState("idle"); // Reset loading — modal is now open
+    } catch (err) {
+      setPaymentState("error");
+      setPaymentMessage(err.message || "Something went wrong.");
+    }
+  };
+
+  const resetPayment = () => {
+    setPaymentState("idle");
+    setPaymentMessage("");
+  };
 
   return (
     <AnimatePresence>
@@ -78,20 +187,90 @@ export default function ProductModal({ product, onClose }) {
                   </div>
                 </div>
 
-                <div className={styles.actions}>
-                  <motion.a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.whatsappBtn}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
+                {/* ── Payment Status Banner ── */}
+                {paymentMessage && (
+                  <motion.div
+                    className={`${styles.statusBanner} ${
+                      paymentState === "success"
+                        ? styles.statusSuccess
+                        : paymentState === "error"
+                        ? styles.statusError
+                        : styles.statusInfo
+                    }`}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                    </svg>
-                    Order via WhatsApp
-                  </motion.a>
+                    <span className={styles.statusIcon}>
+                      {paymentState === "success"
+                        ? "✅"
+                        : paymentState === "error"
+                        ? "❌"
+                        : "ℹ️"}
+                    </span>
+                    <span>{paymentMessage}</span>
+                    {paymentState !== "idle" && (
+                      <button className={styles.statusDismiss} onClick={resetPayment}>
+                        ✕
+                      </button>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* ── Action Buttons ── */}
+                <div className={styles.actions}>
+                  {paymentState === "success" ? (
+                    <motion.button
+                      className={styles.successBtn}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={onClose}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Order Confirmed — Thank You!
+                    </motion.button>
+                  ) : (
+                    <>
+                      <motion.button
+                        className={styles.buyNowBtn}
+                        onClick={handleBuyNow}
+                        disabled={paymentState === "loading"}
+                        whileHover={paymentState !== "loading" ? { scale: 1.03 } : {}}
+                        whileTap={paymentState !== "loading" ? { scale: 0.97 } : {}}
+                        id="razorpay-buy-now-btn"
+                      >
+                        {paymentState === "loading" ? (
+                          <>
+                            <span className={styles.spinner} />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                              <line x1="1" y1="10" x2="23" y2="10" />
+                            </svg>
+                            Buy Now — ₹{product.price}
+                          </>
+                        )}
+                      </motion.button>
+                      <motion.a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.whatsappBtn}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        Order via WhatsApp
+                      </motion.a>
+                    </>
+                  )}
                   <motion.button
                     className={styles.closeAction}
                     onClick={onClose}
