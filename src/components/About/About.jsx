@@ -1,17 +1,37 @@
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./About.module.css";
 import ScrollReveal from "../ScrollReveal/ScrollReveal";
 
 export default function About() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax: image moves at 0.5x scroll speed
+  const imageY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+
   return (
-    <section id="about" className={styles.section}>
+    <section id="about" className={styles.section} ref={sectionRef}>
       <div className={`container ${styles.grid}`}>
         <ScrollReveal direction="left" className={styles.imageCol}>
           <div className={styles.imageWrapper}>
-            <img
-              src="https://images.unsplash.com/photo-1556217477-d325251ece38?w=600&h=700&fit=crop"
-              alt="Baker crafting artisan bread"
+            <motion.img
+              src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=700&fit=crop"
+              alt="Freshly baked artisan bread loaves"
               className={styles.mainImage}
+              style={{ y: imageY }}
+              loading="lazy"
             />
+            {/* Rotating "Since 2015" badge */}
+            <div className={styles.sinceBadge}>
+              <span className={styles.sinceBadgeInner}>
+                <span>Since</span>
+                <strong>2015</strong>
+              </span>
+            </div>
             <div className={styles.accentCard}>
               <span className={styles.accentNumber}>10+</span>
               <span className={styles.accentText}>Years of<br/>Baking Love</span>

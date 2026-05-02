@@ -14,6 +14,8 @@
 .navBtn {
   width: 48px;
   height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   border-radius: 50%;
   background: var(--soft-white);
   border: 1px solid var(--border-light);
@@ -36,7 +38,7 @@
 .cardWrapper {
   flex: 1;
   overflow: hidden;
-  min-height: 280px;
+  min-height: 300px;
   display: flex;
   align-items: center;
 }
@@ -49,6 +51,23 @@
   border: 1px solid var(--border-light);
   text-align: center;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative quote */
+.decorativeQuote {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-family: var(--font-display);
+  font-size: 6rem;
+  font-weight: 800;
+  color: var(--caramel);
+  opacity: 0.08;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 .stars {
@@ -61,6 +80,7 @@
 .star {
   color: var(--gold);
   font-size: 1.2rem;
+  display: inline-block;
 }
 
 .quote {
@@ -71,6 +91,8 @@
   color: var(--text-primary);
   line-height: 1.8;
   margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
 }
 
 .author {
@@ -116,6 +138,8 @@
   background: var(--border-light);
   transition: all 0.3s ease;
   border: none;
+  min-width: 10px;
+  min-height: 10px;
 }
 
 .dotActive {
@@ -139,6 +163,10 @@
   }
 
   .cardWrapper {
-    min-height: 260px;
+    min-height: 280px;
+  }
+
+  .decorativeQuote {
+    font-size: 4rem;
   }
 }

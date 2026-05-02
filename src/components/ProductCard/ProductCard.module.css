@@ -3,13 +3,17 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.4s ease;
+  transition: box-shadow 0.4s ease, transform 0.3s ease;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
+  transform-style: preserve-3d;
+  position: relative;
+  will-change: transform;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+  transform: perspective(800px) translateY(-8px) translateZ(20px) !important;
 }
 
 /* Image */
@@ -25,6 +29,10 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.08);
 }
 
 .imageOverlay {
@@ -118,4 +126,28 @@
 
 .addBtn:hover {
   box-shadow: var(--shadow-md);
+}
+
+/* Hover slide-up order button */
+.hoverAction {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, var(--warm-brown), var(--chocolate));
+  padding: 12px 20px;
+  text-align: center;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .hoverAction {
+  transform: translateY(0);
+}
+
+.hoverActionText {
+  color: white;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }

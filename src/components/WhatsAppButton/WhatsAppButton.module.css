@@ -12,31 +12,70 @@
   justify-content: center;
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
   transition: box-shadow 0.3s ease;
+  animation: whatsappBob 3s ease-in-out infinite;
 }
 
 .fab:hover {
   box-shadow: 0 6px 30px rgba(37, 211, 102, 0.55);
 }
 
-.pulse {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #25D366;
-  animation: pulse 2s ease-out infinite;
-  z-index: -1;
+@keyframes whatsappBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-@keyframes pulse {
+/* Pulse rings */
+.pulseRing1,
+.pulseRing2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #25D366;
+  animation: pulseRing 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.pulseRing2 {
+  animation-delay: 0.7s;
+}
+
+@keyframes pulseRing {
   0% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: 0.7;
   }
   100% {
     transform: scale(1.8);
     opacity: 0;
   }
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  right: 72px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--dark-brown);
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 6px solid var(--dark-brown);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
 }
 
 @media (max-width: 768px) {
@@ -45,5 +84,9 @@
     height: 54px;
     bottom: 20px;
     right: 20px;
+  }
+
+  .tooltip {
+    display: none;
   }
 }

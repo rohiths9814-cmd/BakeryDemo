@@ -1,6 +1,7 @@
 .section {
   padding: var(--section-padding);
   background: var(--cream-dark);
+  position: relative;
 }
 
 .grid {
@@ -17,6 +18,8 @@
 
 .imageWrapper {
   position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
 }
 
 .mainImage {
@@ -25,6 +28,56 @@
   object-fit: cover;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
+  will-change: transform;
+}
+
+/* Rotating "Since 2015" badge */
+.sinceBadge {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--caramel), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  animation: rotateBadge 20s linear infinite;
+  z-index: 5;
+}
+
+.sinceBadgeInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  line-height: 1.1;
+  animation: rotateBadgeReverse 20s linear infinite;
+}
+
+.sinceBadgeInner span {
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sinceBadgeInner strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+@keyframes rotateBadge {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateBadgeReverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
 }
 
 .accentCard {
@@ -39,6 +92,7 @@
   align-items: center;
   gap: 14px;
   box-shadow: var(--shadow-lg);
+  z-index: 4;
 }
 
 .accentNumber {
@@ -125,5 +179,16 @@
   .accentCard {
     right: 10px;
     bottom: -16px;
+  }
+
+  .sinceBadge {
+    width: 70px;
+    height: 70px;
+    top: -10px;
+    right: -10px;
+  }
+
+  .sinceBadgeInner strong {
+    font-size: 1rem;
   }
 }

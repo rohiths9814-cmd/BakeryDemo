@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
@@ -15,6 +15,11 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const navRef = useRef(null);
+
+  const { scrollY } = useScroll();
+  const logoScale = useTransform(scrollY, [0, 60], [1, 0.85]);
+  const navPaddingY = useTransform(scrollY, [0, 60], [18, 10]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -43,6 +48,16 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
     return () => observer.disconnect();
   }, []);
 
+  // Swipe left to close mobile menu
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 80) setMobileOpen(false);
+  };
+
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setMobileOpen(false);
@@ -52,18 +67,25 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
 
   return (
     <motion.nav
+      ref={navRef}
       className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
+      style={{ paddingTop: navPaddingY, paddingBottom: navPaddingY }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
     >
       <div className={`container ${styles.navContainer}`}>
-        <a href="#home" className={styles.logo} onClick={(e) => handleNavClick(e, "#home")}>
+        <motion.a
+          href="#home"
+          className={styles.logo}
+          onClick={(e) => handleNavClick(e, "#home")}
+          style={{ scale: logoScale }}
+        >
           <span className={styles.logoIcon}>🧁</span>
           <span className={styles.logoText}>
             Sweet<span className={styles.logoAccent}>Crumbs</span>
           </span>
-        </a>
+        </motion.a>
 
         <ul className={styles.navLinks}>
           {navLinks.map(({ label, href }) => (
@@ -121,6 +143,8 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <ul className={styles.mobileLinks}>
               {navLinks.map(({ label, href }, i) => (
@@ -128,7 +152,7 @@ export default function Navbar({ darkMode, toggleDarkMode }) {
                   key={href}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: i * 0.08 }}
                 >
                   <a
                     href={href}

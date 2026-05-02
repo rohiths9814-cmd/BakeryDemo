@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Testimonials.module.css";
 import ScrollReveal from "../ScrollReveal/ScrollReveal";
@@ -6,7 +6,19 @@ import testimonials from "../../data/testimonials";
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const total = testimonials.length;
+
+  // Touch swipe
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 60) next();
+    else if (diff < -60) prev();
+  };
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % total);
@@ -16,11 +28,12 @@ export default function Testimonials() {
     setCurrent((prev) => (prev - 1 + total) % total);
   };
 
-  // Auto-slide
+  // Auto-slide with hover pause
   useEffect(() => {
-    const timer = setInterval(next, 5000);
+    if (isPaused) return;
+    const timer = setInterval(next, 4000);
     return () => clearInterval(timer);
-  }, [next]);
+  }, [next, isPaused]);
 
   const t = testimonials[current];
 
@@ -38,7 +51,13 @@ export default function Testimonials() {
           </div>
         </ScrollReveal>
 
-        <div className={styles.slider}>
+        <div
+          className={styles.slider}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <button className={styles.navBtn} onClick={prev} aria-label="Previous testimonial">
             ←
           </button>
@@ -48,24 +67,50 @@ export default function Testimonials() {
               <motion.div
                 key={current}
                 className={styles.card}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, scale: 0.95, x: 40 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.95, x: -40 }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
+                {/* Decorative quote mark */}
+                <span className={styles.decorativeQuote}>"</span>
+
+                {/* Animated stars */}
                 <div className={styles.stars}>
                   {Array.from({ length: t.rating }, (_, i) => (
-                    <span key={i} className={styles.star}>★</span>
+                    <motion.span
+                      key={i}
+                      className={styles.star}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.15 + i * 0.1, duration: 0.3, type: "spring" }}
+                    >
+                      ★
+                    </motion.span>
                   ))}
                 </div>
-                <p className={styles.quote}>"{t.text}"</p>
-                <div className={styles.author}>
+
+                <motion.p
+                  className={styles.quote}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                >
+                  "{t.text}"
+                </motion.p>
+
+                <motion.div
+                  className={styles.author}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.4 }}
+                >
                   <img src={t.avatar} alt={t.name} className={styles.avatar} />
                   <div>
                     <h4 className={styles.authorName}>{t.name}</h4>
                     <span className={styles.authorLabel}>Verified Customer</span>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </AnimatePresence>
           </div>

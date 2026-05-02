@@ -2,6 +2,63 @@
   background: var(--dark-brown);
   color: rgba(255, 255, 255, 0.75);
   padding-top: 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Wave top */
+.waveTop {
+  position: absolute;
+  top: -59px;
+  left: 0;
+  right: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.waveSvg {
+  display: block;
+  width: 100%;
+  height: 60px;
+}
+
+.wavePath {
+  animation: footerWave 4s ease-in-out infinite;
+}
+
+@keyframes footerWave {
+  0%, 100% {
+    d: path("M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z");
+  }
+  50% {
+    d: path("M0,20 C360,0 1080,60 1440,20 L1440,60 L0,60 Z");
+  }
+}
+
+/* Floating ingredient icons */
+.floatingIcons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floatingIcon {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: 0.06;
+  animation: floatIcon ease-in-out infinite;
+  top: 30%;
+}
+
+@keyframes floatIcon {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
 }
 
 .grid {
@@ -10,6 +67,8 @@
   gap: 40px;
   padding-bottom: 50px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 /* Brand */
@@ -43,8 +102,8 @@
 }
 
 .socialLink {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   display: flex;
@@ -57,7 +116,6 @@
 .socialLink:hover {
   background: var(--caramel);
   color: white;
-  transform: translateY(-3px);
 }
 
 /* Links */
@@ -92,6 +150,8 @@
   text-align: center;
   font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.4);
+  position: relative;
+  z-index: 1;
 }
 
 /* Responsive */
